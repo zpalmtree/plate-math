@@ -76,9 +76,26 @@ export function WeightPlateCalculator() {
     const handleBarChange = React.useCallback((itemValue) => {
         const newBarWeight = Number(itemValue);
         setBarWeight(newBarWeight);
-        setTargetWeight(newBarWeight);
-        setInputWeight(newBarWeight.toString());
-    }, []);
+
+        let resetTargetWeight = false;
+
+        for (const { value } of barTypes) {
+            /* If the target weight is currently set to a bar weight, then we
+             * want to reset it - no weight has been added to the bar. If it's
+             * something else, we want to retain that inputted value. */
+            if (targetWeight === value) {
+                resetTargetWeight = true;
+                break;
+            }
+        }
+
+        if (resetTargetWeight) {
+            setTargetWeight(newBarWeight);
+            setInputWeight(newBarWeight.toString());
+        }
+    }, [
+        targetWeight,
+    ]);
 
     return (
         <ScrollView style={styles.container}>
