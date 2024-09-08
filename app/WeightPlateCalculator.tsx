@@ -24,7 +24,6 @@ const YELLOW = '#ffd32b';
 
 const plateWeights = [
     { weight: 45, color: "#000000" },
-    { weight: 35, color: "#000000" },
     { weight: 25, color: "#000000" },
     { weight: 10, color: "#000000" },
     { weight: 5, color: BLUE },
