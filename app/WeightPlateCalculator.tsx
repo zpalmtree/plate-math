@@ -53,18 +53,28 @@ export function WeightPlateCalculator() {
     const [barWeight, setBarWeight] = useState(45);
     const [targetWeight, setTargetWeight] = useState(45);
     const [inputWeight, setInputWeight] = useState("45");
+    const [showWarning, setShowWarning] = useState(false);
 
     const clearPlates = () => {
         setTargetWeight(barWeight);
         setInputWeight(barWeight.toString());
+        setShowWarning(false);
     };
 
     const handleTargetWeightChange = (text) => {
         setInputWeight(text);
+
         const newWeight = parseFloat(text);
-        if (!isNaN(newWeight) && newWeight >= barWeight) {
+
+        if (isNaN(newWeight)) {
+            return;
+        }
+
+        if (newWeight >= barWeight) {
             setTargetWeight(newWeight);
         }
+
+        setShowWarning(newWeight < barWeight);
     };
 
     const plates = useMemo(() => {
@@ -94,12 +104,15 @@ export function WeightPlateCalculator() {
             }
         }
 
+        const inputWeightNum = Number(inputWeight);
+
         if (resetTargetWeight) {
             setTargetWeight(newBarWeight);
             setInputWeight(newBarWeight.toString());
+            setShowWarning(false);
+        } else {
+            setShowWarning(inputWeightNum < newBarWeight);
         }
-
-        const inputWeightNum = Number(inputWeight);
 
         if (inputWeightNum !== targetWeight && inputWeightNum >= newBarWeight) {
             setTargetWeight(inputWeightNum);
@@ -134,6 +147,12 @@ export function WeightPlateCalculator() {
                         onChangeText={handleTargetWeightChange}
                         inputMode='numeric'
                     />
+
+                    {showWarning && (
+                        <Text style={styles.warningText}>
+                            Target weight is lower than bar weight
+                        </Text>
+                    )}
                 </View>
 
                 <Pressable style={styles.clearButton} onPress={clearPlates}>
@@ -298,5 +317,10 @@ const styles = StyleSheet.create({
         textAlign: "center",
         color: "#666",
         marginTop: 8,
+    },
+    warningText: {
+        color: 'red',
+        fontSize: 14,
+        marginTop: 5,
     },
 });
