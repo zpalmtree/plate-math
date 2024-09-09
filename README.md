@@ -2,7 +2,7 @@
 
 Easily calculate which plates you need to put on the bar for a specific weight
 
-![App screenshot](https://i.imgur.com/6iBtVtk.jpeg)
+<img src="https://i.imgur.com/6iBtVtk.jpeg" height="500">
 
 ### Dev Mode
 
