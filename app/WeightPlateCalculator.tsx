@@ -20,11 +20,12 @@ const GREEN = '#15a03e';
 const WHITE = '#efefef';
 const RED = '#cf3239';
 const YELLOW = '#ffd32b';
+const BLACK = '#18181b';
 
 const plateWeights = [
-    { weight: 45, color: "#000000" },
-    { weight: 25, color: "#000000" },
-    { weight: 10, color: "#000000" },
+    { weight: 45, color: BLACK },
+    { weight: 25, color: BLACK },
+    { weight: 10, color: BLACK },
     { weight: 5, color: BLUE },
     { weight: 2.5, color: GREEN },
     { weight: 1.25, color: WHITE },
@@ -35,11 +36,16 @@ const plateWeights = [
 ];
 
 const getPlateSize = (weight) => {
-    if (weight > 5) return 70;
+    if (weight > 5) {
+        return 70;
+    }
+
     // Non-linear scaling for plates 5 lbs and below
-    const minSize = 25; // Minimum size for the smallest plate
-    const maxSize = 40; // Maximum size (same as larger plates)
+    const minSize = 35; // Minimum size for the smallest plate
+    const maxSize = 50; // Maximum size
+
     const scale = (weight / 5) ** 0.5; // Square root for non-linear scaling
+
     return minSize + (maxSize - minSize) * scale;
 };
 
