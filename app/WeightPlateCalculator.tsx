@@ -98,7 +98,13 @@ export function WeightPlateCalculator() {
             setTargetWeight(newBarWeight);
             setInputWeight(newBarWeight.toString());
         }
-    }, [targetWeight]);
+
+        const inputWeightNum = Number(inputWeight);
+
+        if (inputWeightNum !== targetWeight && inputWeightNum >= newBarWeight) {
+            setTargetWeight(inputWeightNum);
+        }
+    }, [targetWeight, inputWeight]);
 
     return (
         <ScrollView style={styles.container}>
