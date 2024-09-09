@@ -2,13 +2,12 @@ import React, { useState, useMemo, useCallback } from "react";
 import {
     View,
     Text,
-    TouchableOpacity,
+    Pressable,
     ScrollView,
     StyleSheet,
     TextInput,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
-import { StatusBar } from "expo-status-bar";
 
 const barTypes = [
     { label: "Standard (45 lbs)", value: 45 },
@@ -97,7 +96,6 @@ export function WeightPlateCalculator() {
 
     return (
         <ScrollView style={styles.container}>
-            <StatusBar style="auto" />
             <View style={styles.card}>
                 <Text style={styles.title}>Weight Plate Calculator</Text>
                 <View style={styles.inputContainer}>
@@ -122,13 +120,13 @@ export function WeightPlateCalculator() {
                         style={styles.input}
                         value={inputWeight}
                         onChangeText={handleTargetWeightChange}
-                        keyboardType="numeric"
+                        inputMode='numeric'
                     />
                 </View>
 
-                <TouchableOpacity style={styles.clearButton} onPress={clearPlates}>
+                <Pressable style={styles.clearButton} onPress={clearPlates}>
                     <Text style={styles.calculateButtonText}>Clear</Text>
-                </TouchableOpacity>
+                </Pressable>
             </View>
             <View style={styles.card}>
                 <Text style={styles.subtitle}>Required Plates (each side):</Text>
@@ -171,6 +169,7 @@ export function WeightPlateCalculator() {
         </ScrollView>
     );
 }
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
