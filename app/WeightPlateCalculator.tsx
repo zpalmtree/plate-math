@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import {
     View,
     Text,
@@ -35,6 +35,15 @@ const plateWeights = [
     { weight: 0.25, color: GREEN },
 ];
 
+const getPlateSize = (weight) => {
+    if (weight > 5) return 70;
+    // Non-linear scaling for plates 5 lbs and below
+    const minSize = 25; // Minimum size for the smallest plate
+    const maxSize = 40; // Maximum size (same as larger plates)
+    const scale = (weight / 5) ** 0.5; // Square root for non-linear scaling
+    return minSize + (maxSize - minSize) * scale;
+};
+
 export function WeightPlateCalculator() {
     const [barWeight, setBarWeight] = useState(45);
     const [targetWeight, setTargetWeight] = useState(45);
@@ -45,13 +54,7 @@ export function WeightPlateCalculator() {
         setInputWeight(barWeight.toString());
     };
 
-    const adjustWeight = (amount: number) => {
-        const newWeight = Math.max(barWeight, targetWeight + amount);
-        setTargetWeight(newWeight);
-        setInputWeight(newWeight.toString());
-    };
-
-    const handleTargetWeightChange = (text: string) => {
+    const handleTargetWeightChange = (text) => {
         setInputWeight(text);
         const newWeight = parseFloat(text);
         if (!isNaN(newWeight) && newWeight >= barWeight) {
@@ -59,7 +62,7 @@ export function WeightPlateCalculator() {
         }
     };
 
-    const plates = React.useMemo(() => {
+    const plates = useMemo(() => {
         let remainingWeight = (targetWeight - barWeight) / 2;
         const newPlates = [];
 
@@ -73,16 +76,13 @@ export function WeightPlateCalculator() {
         return newPlates;
     }, [targetWeight, barWeight]);
 
-    const handleBarChange = React.useCallback((itemValue) => {
+    const handleBarChange = useCallback((itemValue) => {
         const newBarWeight = Number(itemValue);
         setBarWeight(newBarWeight);
 
         let resetTargetWeight = false;
 
         for (const { value } of barTypes) {
-            /* If the target weight is currently set to a bar weight, then we
-             * want to reset it - no weight has been added to the bar. If it's
-             * something else, we want to retain that inputted value. */
             if (targetWeight === value) {
                 resetTargetWeight = true;
                 break;
@@ -93,9 +93,7 @@ export function WeightPlateCalculator() {
             setTargetWeight(newBarWeight);
             setInputWeight(newBarWeight.toString());
         }
-    }, [
-        targetWeight,
-    ]);
+    }, [targetWeight]);
 
     return (
         <ScrollView style={styles.container}>
@@ -135,25 +133,36 @@ export function WeightPlateCalculator() {
             <View style={styles.card}>
                 <Text style={styles.subtitle}>Required Plates (each side):</Text>
                 <View style={styles.plateContainer}>
-                    {plates.map((plate, index) => (
-                        <View
-                            key={index}
-                            style={[
-                                styles.plate,
-                                { backgroundColor: plate.color },
-                                plate.weight <= 5 && styles.smallPlate,
-                            ]}
-                        >
-                            <Text
+                    {plates.map((plate, index) => {
+                        const size = getPlateSize(plate.weight);
+                        return (
+                            <View
+                                key={index}
                                 style={[
-                                    styles.plateText,
-                                    { color: plate.weight >= 10 ? "white" : "black" },
+                                    styles.plate,
+                                    { 
+                                        backgroundColor: plate.color,
+                                        width: size,
+                                        height: size,
+                                        borderRadius: size / 2,
+                                    },
+                                    plate.weight <= 5 && styles.smallPlate,
                                 ]}
                             >
-                                {plate.weight}
-                            </Text>
-                        </View>
-                    ))}
+                                <Text
+                                    style={[
+                                        styles.plateText,
+                                        { 
+                                            color: plate.weight >= 10 ? "white" : "black",
+                                            fontSize: Math.max(12, size / 3),
+                                        },
+                                    ]}
+                                >
+                                    {plate.weight}
+                                </Text>
+                            </View>
+                        );
+                    })}
                 </View>
                 {plates.length === 0 && (
                     <Text style={styles.noPlatesText}>No additional plates needed</Text>
@@ -162,7 +171,6 @@ export function WeightPlateCalculator() {
         </ScrollView>
     );
 }
-
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -259,12 +267,9 @@ const styles = StyleSheet.create({
         rowGap: 5,
     },
     plate: {
-        width: 60,
-        height: 60,
-        borderRadius: 30,
-        margin: 4,
         justifyContent: "center",
         alignItems: "center",
+        margin: 4,
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
@@ -272,14 +277,10 @@ const styles = StyleSheet.create({
         elevation: 2,
     },
     smallPlate: {
-        width: 50,
-        height: 50,
-        borderRadius: 25,
         borderWidth: 1,
         borderColor: 'black',
     },
     plateText: {
-        color: "white",
         fontWeight: "bold",
     },
     noPlatesText: {
