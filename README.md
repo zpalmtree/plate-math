@@ -12,6 +12,12 @@ Easily calculate which plates you need to put on the bar for a specific weight
 
 `eas build -p android --profile production-apk`
 
+### Build iOS App
+
+`eas submit -p ios --non-interactive`
+
+### Submit 
+
 ### Check Logs
 
 `adb logcat *:S ReactNative:V ReactNativeJS:V`
