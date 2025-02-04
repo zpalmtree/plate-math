@@ -14,7 +14,7 @@ Easily calculate which plates you need to put on the bar for a specific weight
 
 ### Build iOS App
 
-`eas submit -p ios --non-interactive`
+`eas submit -p ios`
 
 ### Submit 
 
